@@ -7,9 +7,9 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @Entity
 @Table(name = "categories")
-@Builder
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +17,5 @@ public class Category {
     @Column(unique = true)
     private String code;
     private String name;
-    @Column(columnDefinition = "TEXT")
     private String description;
 }

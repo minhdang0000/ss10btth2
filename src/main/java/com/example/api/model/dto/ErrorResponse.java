@@ -1,16 +1,14 @@
 package com.example.api.model.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Builder
-@Data
 public class ErrorResponse {
     private LocalDateTime timestamp;
     private int status;

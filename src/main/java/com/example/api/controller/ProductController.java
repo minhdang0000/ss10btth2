@@ -1,11 +1,10 @@
 package com.example.api.controller;
 
-import com.example.api.model.dto.ProductReq;
+import com.example.api.model.dto.ProductRequest;
 import com.example.api.model.dto.StockQuantityUpdateRequest;
 import com.example.api.model.entity.Product;
 import com.example.api.service.ProductService;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,33 +15,29 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/products")
 public class ProductController {
     private final ProductService productService;
-
     @GetMapping
-    public ResponseEntity<Page<Product>> getProducts(
+    public ResponseEntity<Page<Product>> getAllProducts(
             @RequestParam(required = false) Boolean isAvailable,
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ){
-        return ResponseEntity.ok(productService.getProducts(isAvailable, pageable));
+        return ResponseEntity.ok(productService.getAllProducts(isAvailable, pageable));
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id){
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody ProductReq req){
-        return new ResponseEntity<>(
-          productService.createProductForCategory(req.getCategoryId(), req), HttpStatus.CREATED
-        );
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody ProductRequest req) {
+        return new ResponseEntity<>(productService.createProductForCategory(req.getCategoryId(), req), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductReq req){
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequest req) {
         return ResponseEntity.ok(productService.updateProduct(id, req));
     }
 
@@ -52,8 +47,9 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id){
+    public ResponseEntity<Product> deleteProduct(@PathVariable Long id){
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
+
 }

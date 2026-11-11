@@ -1,6 +1,8 @@
 package com.example.api.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -9,9 +11,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @Entity
 @Table(name = "products")
-@Builder
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +22,8 @@ public class Product {
     private String sku;
     private String name;
     private BigDecimal price;
+    @NotNull
+    @Positive
     private Integer stockQuantity;
     private Boolean isAvailable;
     @ManyToOne

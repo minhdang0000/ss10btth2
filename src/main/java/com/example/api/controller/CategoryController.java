@@ -1,7 +1,7 @@
 package com.example.api.controller;
 
-import com.example.api.model.dto.CategoryReq;
-import com.example.api.model.dto.ProductReq;
+import com.example.api.model.dto.CategoryRequest;
+import com.example.api.model.dto.ProductRequest;
 import com.example.api.model.entity.Category;
 import com.example.api.model.entity.Product;
 import com.example.api.service.CategoryService;
@@ -27,35 +27,33 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<Category> getCategoryById(@PathVariable Long id){
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Category> createCategory(@Valid @RequestBody CategoryReq req) {
+    public ResponseEntity<Category> createCategory(@Valid @RequestBody CategoryRequest req) {
         return new ResponseEntity<>(categoryService.createCategory(req), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryReq req) {
+    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryRequest req) {
         return ResponseEntity.ok(categoryService.updateCategory(id, req));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Category> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<Category> deleteCategory(@PathVariable Long id){
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/products")
-    public ResponseEntity<List<Product>> getProductsByCategoryId(@PathVariable Long id) {
+    public ResponseEntity<List<Product>> getProductsByCategoryId(@PathVariable Long id){
         return ResponseEntity.ok(categoryService.getProductsByCategoryId(id));
     }
 
     @PostMapping("/{id}/products")
-    public ResponseEntity<Product> createProductForCategory(@PathVariable Long id, @Valid @RequestBody ProductReq req) {
+    public ResponseEntity<Product> createProductForCategory(@PathVariable Long id, @Valid @RequestBody ProductRequest req) {
         return new ResponseEntity<>(productService.createProductForCategory(id, req), HttpStatus.CREATED);
     }
-
-
 }

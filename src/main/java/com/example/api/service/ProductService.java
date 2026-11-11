@@ -1,15 +1,14 @@
 package com.example.api.service;
 
-
 import com.example.api.exception.DuplicateResourceException;
 import com.example.api.exception.ResourceNotFoundException;
-import com.example.api.model.dto.ProductReq;
+import com.example.api.model.dto.CategoryRequest;
+import com.example.api.model.dto.ProductRequest;
 import com.example.api.model.dto.StockQuantityUpdateRequest;
 import com.example.api.model.entity.Category;
 import com.example.api.model.entity.Product;
 import com.example.api.repository.CategoryRepository;
 import com.example.api.repository.ProductRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +20,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
-    public Page<Product> getProducts(Boolean isAvailable, Pageable pageable){
+    public Page<Product> getAllProducts(Boolean isAvailable, Pageable pageable) {
         Page<Product> productPage;
         if(isAvailable != null){
             productPage = productRepository.findByIsAvailable(isAvailable, pageable);
@@ -32,46 +31,47 @@ public class ProductService {
     }
 
     public Product getProductById(Long id){
-        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Khong tim thay san pham voi ID: " + id));
+        Product product = productRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Product not found"));
         return product;
     }
-    public Product updateProduct(Long id, ProductReq dto){
-        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Khong tim thay san pham  voi ID: " + id));
-        Category category = categoryRepository.findById(dto.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("Khong tim thay danh muc voi id: " + dto.getCategoryId()));
-        if(!product.getSku().equals(dto.getSku()) && productRepository.existsBySku(dto.getSku())){
-            throw new DuplicateResourceException("Ma SKU" + dto.getSku()+ " da ton tai");
+
+    public Product updateProduct(Long id, ProductRequest req){
+        Product product = productRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Product not found"));
+        Category category = categoryRepository.findById(req.getCategoryId()).orElseThrow(()->new ResourceNotFoundException("Category not found"));
+        if(!product.getSku().equals(req.getSku()) && productRepository.existsBySku(req.getSku())){
+            throw new DuplicateResourceException("Sku already exists");
         }
-        product.setSku(dto.getSku());
-        product.setName(dto.getName());
-        product.setPrice(dto.getPrice());
-        product.setStockQuantity(dto.getStockQuantity());
-        product.setIsAvailable(dto.getIsAvailable());
+        product.setSku(req.getSku());
+        product.setPrice(req.getPrice());
+        product.setName(req.getName());
+        product.setStockQuantity(req.getStockQuantity());
+        product.setIsAvailable(req.getIsAvailable());
         product.setCategory(category);
         return productRepository.save(product);
     }
 
-    public Product updateStockQuantity(Long id, StockQuantityUpdateRequest dto){
-        Product product = productRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Product not found"));
-        product.setStockQuantity(dto.getStockQuantity());
-        return productRepository.save(product);
-    }
-
     public void deleteProduct(Long id){
-        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        Product product = productRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Product not found"));
         productRepository.delete(product);
     }
 
-    public Product createProductForCategory(Long categoryId, ProductReq dto){
-        Category category = categoryRepository.findById(categoryId).orElseThrow(()->new ResourceNotFoundException("Category not found!"));
-        if(productRepository.existsBySku(dto.getSku())){
-            throw new DuplicateResourceException("Ma SKU " + dto.getSku() + "da ton tai");
+    public Product updateStockQuantity(Long id, StockQuantityUpdateRequest req){
+        Product product = productRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Product not found"));
+        product.setStockQuantity(req.getStockQuantity());
+        return productRepository.save(product);
+    }
+
+    public Product createProductForCategory(Long categoryId, ProductRequest req){
+        Category category = categoryRepository.findById(categoryId).orElseThrow(()->new ResourceNotFoundException("Category not found"));
+        if(productRepository.existsBySku(req.getSku())){
+            throw new DuplicateResourceException("Sku already exists");
         }
         Product product = Product.builder()
-                .sku(dto.getSku())
-                .name(dto.getName())
-                .price(dto.getPrice())
-                .stockQuantity(dto.getStockQuantity())
-                .isAvailable(dto.getIsAvailable())
+                .sku(req.getSku())
+                .name(req.getName())
+                .price(req.getPrice())
+                .stockQuantity(req.getStockQuantity())
+                .isAvailable(req.getIsAvailable())
                 .category(category)
                 .build();
         return productRepository.save(product);

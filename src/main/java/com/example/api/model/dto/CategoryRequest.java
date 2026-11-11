@@ -1,22 +1,18 @@
 package com.example.api.model.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class CategoryReq {
+public class CategoryRequest {
     @NotBlank
     @Size(min = 3, max = 15)
-    @Pattern(regexp = "^[A-Z_]+$")
     private String code;
     @NotBlank
     @Size(max = 100)
