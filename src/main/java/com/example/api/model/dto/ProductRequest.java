@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 public class ProductRequest {
     @NotBlank
     @Size(min = 8, max = 12)
+    @Pattern(regexp = "^[a-zA-Z0-9]{8,12}$")
     private String sku;
     @NotBlank
     @Size(min = 5, max = 200)
