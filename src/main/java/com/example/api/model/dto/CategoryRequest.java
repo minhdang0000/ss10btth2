@@ -13,6 +13,7 @@ import lombok.*;
 public class CategoryRequest {
     @NotBlank
     @Size(min = 3, max = 15)
+    @Pattern(regexp = "^[A-Z_]+$")
     private String code;
     @NotBlank
     @Size(max = 100)
